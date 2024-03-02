@@ -4,6 +4,10 @@ A lightweight Swift library supporting convertion between Chinese(both Simplifie
 ![Example](Gif/HanziPinyinExample.gif "HanziPinyinExample")
 
 ## How To Get Started
+### Swift Package Manager
+
+Click "Files -> Swift Package Manager -> Add Package Dependency..." in Xcode's menu and search "https://github.com/teambition/HanziPinyin"
+
 ### Carthage
 Specify "HanziPinyin" in your ```Cartfile```:
 ```ogdl 

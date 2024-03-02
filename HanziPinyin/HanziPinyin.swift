@@ -18,9 +18,11 @@ internal struct HanziPinyin {
 
     internal static let sharedInstance = HanziPinyin()
     internal fileprivate(set) var unicodeToPinyinTable = [String: String]()
+    internal fileprivate(set) var duoyinziTable = [String: String]()
 
     init() {
-        unicodeToPinyinTable = initializeResource()
+        unicodeToPinyinTable = initPinyinResource()
+        duoyinziTable = initDuoyinziResource()
     }
 
     internal static func pinyinArray(withCharCodePoint charCodePoint: UInt32, outputFormat: PinyinOutputFormat = .default) -> [String] {

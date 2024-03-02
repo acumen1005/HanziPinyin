@@ -10,6 +10,7 @@ import Foundation
 
 private struct CacheKeys {
     static let unicodeToPinyin = "HanziPinyin.UnicodeToPinyin"
+    static let duoyinzi = "HanziPinyin.Duoyinzi"
 }
 
 internal extension HanziPinyin {
@@ -19,13 +20,21 @@ internal extension HanziPinyin {
         }
         return Bundle(url: bundleURL)
     }
+    
+    func initPinyinResource() -> [String: String] {
+        initializeResource("unicode_to_hanyu_pinyin", resourceCacheKey: CacheKeys.unicodeToPinyin)
+    }
+    
+    func initDuoyinziResource() -> [String: String] {
+        initializeResource("unicode_duoyinzi_pinyin", resourceCacheKey: CacheKeys.duoyinzi)
+    }
 
-    func initializeResource() -> [String: String] {
-        if let cachedPinyinTable = HanziPinyin.cachedObject(forKey: CacheKeys.unicodeToPinyin) as? [String: String] {
+    func initializeResource(_ fileName: String ,resourceCacheKey: String) -> [String: String] {
+        if let cachedPinyinTable = HanziPinyin.cachedObject(forKey: resourceCacheKey) as? [String: String] {
             return cachedPinyinTable
         } else {
             let resourceBundle = podResourceBundle ?? Bundle(for: WhateverClass.self)
-            guard let resourcePath = resourceBundle.path(forResource: "unicode_to_hanyu_pinyin", ofType: "txt") else {
+            guard let resourcePath = resourceBundle.path(forResource: fileName, ofType: "txt") else {
                 return [:]
             }
 
@@ -42,7 +51,7 @@ internal extension HanziPinyin {
                     pinyinTable.updateValue(components[1], forKey: components[0])
                 }
 
-                HanziPinyin.cache(pinyinTable, forKey: CacheKeys.unicodeToPinyin)
+                HanziPinyin.cache(pinyinTable, forKey: resourceCacheKey)
                 return pinyinTable
             } catch _ {
                 return [:]
