@@ -11,14 +11,23 @@ import Foundation
 public extension String {
     func toPinyin(withFormat outputFormat: PinyinOutputFormat = .default, separator: String = " ") -> String {
         var pinyinStrings = [String]()
-        for unicodeScalar in unicodeScalars {
-            let charCodePoint = unicodeScalar.value
-            let pinyinArray = HanziPinyin.pinyinArray(withCharCodePoint: charCodePoint, outputFormat: outputFormat)
+        
+        if HanziPinyin.sharedInstance.duoyinziTable.keys.contains(self) {
+            pinyinStrings = HanziPinyin.sharedInstance.duoyinziTable[self]?.split(separator: " ").map { pinyin in
+                var immutablePinyin = pinyin
+                immutablePinyin.removeLast()
+                return immutablePinyin + separator
+            } ?? []
+        } else {
+            for unicodeScalar in unicodeScalars {
+                let charCodePoint = unicodeScalar.value
+                let pinyinArray = HanziPinyin.pinyinArray(withCharCodePoint: charCodePoint, outputFormat: outputFormat)
 
-            if pinyinArray.count > 0 {
-                pinyinStrings.append(pinyinArray.first! + separator)
-            } else {
-                pinyinStrings.append(String(unicodeScalar))
+                if pinyinArray.count > 0 {
+                    pinyinStrings.append(pinyinArray.first! + separator)
+                } else {
+                    pinyinStrings.append(String(unicodeScalar))
+                }
             }
         }
 
@@ -41,15 +50,24 @@ public extension String {
 
     func toPinyinAcronym(withFormat outputFormat: PinyinOutputFormat = .default, separator: String = "") -> String {
         var pinyinStrings = [String]()
-        for unicodeScalar in unicodeScalars {
-            let charCodePoint = unicodeScalar.value
-            let pinyinArray = HanziPinyin.pinyinArray(withCharCodePoint: charCodePoint, outputFormat: outputFormat)
+        
+        if HanziPinyin.sharedInstance.duoyinziTable.keys.contains(self) {
+            pinyinStrings = HanziPinyin.sharedInstance.duoyinziTable[self]?.split(separator: " ").map { pinyin in
+                var immutablePinyin = pinyin
+                immutablePinyin.removeLast()
+                return String(immutablePinyin.first!) + separator
+            } ?? []
+        } else {
+            for unicodeScalar in unicodeScalars {
+                let charCodePoint = unicodeScalar.value
+                let pinyinArray = HanziPinyin.pinyinArray(withCharCodePoint: charCodePoint, outputFormat: outputFormat)
 
-            if pinyinArray.count > 0 {
-                let acronym = pinyinArray.first!.first!
-                pinyinStrings.append(String(acronym) + separator)
-            } else {
-                pinyinStrings.append(String(unicodeScalar))
+                if pinyinArray.count > 0 {
+                    let acronym = pinyinArray.first!.first!
+                    pinyinStrings.append(String(acronym) + separator)
+                } else {
+                    pinyinStrings.append(String(unicodeScalar))
+                }
             }
         }
 
